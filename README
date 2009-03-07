@@ -1,0 +1,34 @@
+SWFUpload for RoR
+
+SWFUpload is a brilliant flash uploader which allow you upload files and subscribe nearly all events when uploading, Unfortunately, flash has cookie problem when uploading files, plus Rails has a powerful security facility, makes it so hard to integrate SWFUpload with Rails, this simple plugin will does the hacking and provides a Helper function for u to make integration easier.
+
+Installion
+
+  ruby script/plugin install git://github.com/klesh/klesh_swfupload.git
+  cp vendor/plugins/klesh_swfupload/javascripts/swfupload.js public/javascripts/
+  cp -r vendor/plugins/klesh_swfupload/swfs public/
+
+Usage
+
+ in Controller:
+  
+  session :cookie_only => false, :only => :ACTION_FOR_RECEIVING_FILES
+  
+  def ACTION_FOR_RECEIVING_FILES
+    uploaded_file_name = params[:Filename]
+    uploaded_file = params[:Filedata]
+  end
+  
+ in View:
+ 
+  <%= javascript_include_tag 'swfupload' %>
+  ...
+  ...
+  <%= swfupload 'swfuploader', {:action => :ACTION_FOR_RECEIVING_FILES}, {:button_text => 'Upload', :button_width => 60, :button_height => 20, :upload_success_handler => "function(file, response){alert(response);}"} %>
+  
+ would generate code like:
+  <span id="swfuploader_place_holder"></span><script type="text/javascript">var swfuploader = new SWFUpload({"post_params" : {"authenticity_token" : "b5ccd9c4077181f8a34b163b77ab901b3c56bd45"},"button_height" : 20,"flash_url" : "/swfs/swfupload.swf","upload_success_handler" : function(file, response){alert(response);},"upload_url" : "/CONTROLLER/ACTION_FOR_RECEIVING_FILES?_youapp_session=xxxxxxxxxxxxxxxxxxxxxxx","button_placeholder_id" : "swfuploader_place_holder","button_text" : "Upload","file_dialog_complete_handler" : function(file_count){if (file_count) this.startUpload();},"button_width" : 60})</script>
+  
+ for swfupload Helper function, first argument is the name of javascript object, second for ACTION_FOR_RECEIVING_FILES url_for function, third for swfupload.js, for detail of third arugument, please refer to swfupload.org or attached docs/swfupload.html
+ 
+Tested in Rails 2.2.2 and SWFUpload v2.2.0 Beta 5
